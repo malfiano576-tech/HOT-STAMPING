@@ -424,6 +424,13 @@ button:hover{
     border:1px solid #fca5a5;
 }
 
+/* FOTO PRODUK STAMPING */
+.foto-stamping-preview{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.foto-stamping-preview img{width:90px;height:75px;object-fit:cover;border:1px solid #cbd5e1;border-radius:7px;background:#f8fafc}
+.foto-stamping-cell{display:flex;flex-wrap:wrap;gap:5px;min-width:150px}
+.foto-stamping-cell img{width:64px;height:54px;object-fit:cover;border-radius:5px;border:1px solid #cbd5e1;cursor:pointer}
+.foto-stamping-hint{font-size:10px;color:#64748b;margin-top:5px;display:block}
+
 /* =====================================================
    RESPONSIVE
 ===================================================== */
@@ -622,6 +629,14 @@ button:hover{
         </div>
 
 
+        <!-- FOTO PRODUK: BISA LEBIH DARI SATU -->
+        <div class="stamping-form-group full">
+            <label>FOTO PRODUK / CONTOH CETAKAN (BISA PILIH BEBERAPA FOTO)</label>
+            <input type="file" id="stampingFotoProduk" accept="image/*" multiple onchange="previewFotoStamping()">
+            <small class="foto-stamping-hint">Foto akan diperkecil otomatis agar lebih ringan saat disimpan ke Supabase. Maksimal 5 foto per barang.</small>
+            <div id="previewFotoStamping" class="foto-stamping-preview"></div>
+        </div>
+
         <!-- =================================================
              CETAKAN / FOIL
         ================================================== -->
@@ -798,6 +813,7 @@ button:hover{
                     <th>Tanggal</th>
                     <th>Nama Barang</th>
                     <th>Kode</th>
+                    <th>Foto Produk</th>
                     <th>Cetakan</th>
                     <th>Foil</th>
                     <th>Ukuran Foil</th>
@@ -818,7 +834,7 @@ button:hover{
                 <tr>
 
                     <td
-                        colspan="13"
+                        colspan="14"
                         class="stamping-empty"
                     >
                         Memuat data...
@@ -901,6 +917,66 @@ function escapeHTML(text){
 
     return div.innerHTML;
 
+}
+
+/* =====================================================
+   FOTO PRODUK: PREVIEW + KOMPRESI
+===================================================== */
+let fotoStampingTerpilih = [];
+
+function kompresFotoStamping(file){
+    return new Promise((resolve,reject)=>{
+        const reader = new FileReader();
+        reader.onerror = () => reject(new Error('Tidak bisa membaca file foto.'));
+        reader.onload = () => {
+            const img = new Image();
+            img.onerror = () => reject(new Error('File foto tidak valid.'));
+            img.onload = () => {
+                const maxSide = 1000;
+                const scale = Math.min(1, maxSide / Math.max(img.width, img.height));
+                const canvas = document.createElement('canvas');
+                canvas.width = Math.max(1, Math.round(img.width * scale));
+                canvas.height = Math.max(1, Math.round(img.height * scale));
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                resolve(canvas.toDataURL('image/jpeg', 0.68));
+            };
+            img.src = reader.result;
+        };
+        reader.readAsDataURL(file);
+    });
+}
+
+async function previewFotoStamping(){
+    const input = document.getElementById('stampingFotoProduk');
+    const preview = document.getElementById('previewFotoStamping');
+    const files = Array.from(input.files || []);
+    if(files.length > 5){
+        tampilkanStatus('Maksimal 5 foto untuk satu barang. Pilih ulang maksimal 5 foto.', 'error');
+        input.value = '';
+        fotoStampingTerpilih = [];
+        preview.innerHTML = '';
+        return;
+    }
+    try{
+        fotoStampingTerpilih = await Promise.all(files.map(kompresFotoStamping));
+        preview.innerHTML = fotoStampingTerpilih.map((src,i)=>
+            `<img src="${src}" alt="Preview foto produk ${i+1}" title="Foto ${i+1}">`
+        ).join('');
+        if(files.length) tampilkanStatus(`${files.length} foto siap disimpan bersama data barang.`, 'success');
+    }catch(err){
+        tampilkanStatus('Gagal memproses foto: ' + err.message, 'error');
+    }
+}
+
+function renderFotoStamping(fotos){
+    if(typeof fotos === 'string'){
+        try{ fotos = JSON.parse(fotos); }catch(e){ fotos = []; }
+    }
+    if(!Array.isArray(fotos) || !fotos.length) return '-';
+    return `<div class="foto-stamping-cell">${fotos.map((src,i)=>
+        `<img src="${src}" alt="Foto produk ${i+1}" title="Klik untuk melihat foto" onclick="window.open(this.src,'_blank')">`
+    ).join('')}</div>`;
 }
 
 
@@ -1332,6 +1408,9 @@ async function simpanSettingStamping(){
         keterangan:
             keterangan,
 
+        foto_produk:
+            fotoStampingTerpilih,
+
         detail_cetakan:
             detailCetakan
 
@@ -1409,7 +1488,7 @@ async function tampilkanDataStamping(){
         <tr>
 
             <td
-                colspan="13"
+                colspan="14"
                 class="stamping-empty"
             >
                 Memuat data...
@@ -1441,7 +1520,7 @@ async function tampilkanDataStamping(){
             <tr>
 
                 <td
-                    colspan="13"
+                    colspan="14"
                     class="stamping-empty"
                 >
 
@@ -1491,7 +1570,7 @@ async function tampilkanDataStamping(){
             <tr>
 
                 <td
-                    colspan="13"
+                    colspan="14"
                     class="stamping-empty"
                 >
 
@@ -1733,6 +1812,9 @@ async function tampilkanDataStamping(){
 
                     </td>
 
+                    <td>
+                        ${renderFotoStamping(item.foto_produk)}
+                    </td>
 
                     <td class="stamping-cetakan">
 
@@ -1923,6 +2005,11 @@ function resetFormStamping(){
         "stampingKeterangan"
     ).value = "";
 
+    fotoStampingTerpilih = [];
+    const inputFoto = document.getElementById("stampingFotoProduk");
+    if(inputFoto) inputFoto.value = "";
+    const previewFoto = document.getElementById("previewFotoStamping");
+    if(previewFoto) previewFoto.innerHTML = "";
 
     const container =
         document.getElementById(
