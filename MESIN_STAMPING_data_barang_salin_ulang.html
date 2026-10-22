@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SISTEM MONITORING MAINTENANCE - MESIN STAMPING</title>
+<style>
+:root{--navy:#142b4a;--blue:#2563eb;--bg:#eef2f7;--white:#fff;--muted:#64748b;--line:#dbe3ee;--green:#16a34a;--red:#dc2626;--amber:#d97706}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;background:var(--bg);color:#172033}
+.layout{display:flex;min-height:100vh}.sidebar{width:255px;background:linear-gradient(180deg,#102746,#173b65);color:#fff;padding:22px 15px;position:fixed;inset:0 auto 0 0;overflow:auto;z-index:5;transition:.25s}
+.brand{padding:8px 10px 24px;border-bottom:1px solid #ffffff25;margin-bottom:18px}.brand .eyebrow{font-size:11px;letter-spacing:1.5px;color:#b9d8ff;font-weight:800}.brand h2{font-size:19px;line-height:1.3;margin:9px 0 0}.brand p{font-size:12px;color:#cbd5e1;margin:7px 0 0}
+.nav{display:grid;gap:7px}.nav button{border:0;background:transparent;color:#dbeafe;text-align:left;padding:12px 13px;border-radius:10px;font-size:13px;cursor:pointer;font-weight:650}.nav button:hover,.nav button.active{background:#ffffff1c;color:#fff}.nav button span{display:inline-block;width:25px}
+.main{margin-left:255px;width:calc(100% - 255px);padding:24px;min-width:0}.topbar{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-bottom:22px}.topbar h1{font-size:23px;margin:0;color:#142b4a}.top-meta{display:flex;gap:10px;align-items:center;color:#475569;font-size:12px}.clock{background:white;padding:10px 13px;border:1px solid var(--line);border-radius:11px;font-weight:750}.menu-btn{display:none;border:0;background:var(--navy);color:white;padding:10px 13px;border-radius:9px}
+.page{display:none}.page.active{display:block}.hero{background:linear-gradient(120deg,#16365e,#2563a6);color:white;border-radius:17px;padding:25px;margin-bottom:20px;box-shadow:0 8px 24px #183b651a}.hero .eyebrow{font-size:11px;letter-spacing:1.8px;color:#c9e2ff;font-weight:800}.hero h2{font-size:25px;margin:9px 0}.hero p{color:#e0edff;margin:0;line-height:1.6;font-size:13px}.cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:20px}.card,.panel{background:white;border:1px solid var(--line);border-radius:14px;padding:18px;box-shadow:0 3px 12px #0f172a06}.stat-label{color:var(--muted);font-size:12px;font-weight:650}.stat-value{font-size:29px;font-weight:800;margin-top:9px;color:#132d4e}.stat-note{font-size:11px;color:var(--muted);margin-top:5px}.section-title{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 15px}.section-title h3{font-size:16px;margin:0;color:#173354}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}.field{display:flex;flex-direction:column;gap:6px}.field.full{grid-column:1/-1}label{font-size:12px;color:#475569;font-weight:700}input,select,textarea{font:inherit;font-size:13px;border:1px solid #cbd5e1;border-radius:9px;padding:11px 12px;background:white;color:#172033;width:100%;outline:none}input:focus,select:focus,textarea:focus{border-color:#60a5fa;box-shadow:0 0 0 3px #dbeafe}textarea{min-height:88px;resize:vertical}.actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:15px}.btn{border:0;border-radius:9px;padding:10px 14px;font-weight:750;font-size:12px;cursor:pointer}.primary{background:#2563eb;color:white}.secondary{background:#e2e8f0;color:#334155}.danger{background:#fee2e2;color:#b91c1c}.success{background:#dcfce7;color:#166534}.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:11px}table{width:100%;border-collapse:collapse;min-width:750px;background:white}th,td{text-align:left;padding:12px;border-bottom:1px solid #e8edf4;font-size:12px;vertical-align:top}th{background:#f1f5f9;color:#334155;font-size:11px;text-transform:uppercase;letter-spacing:.35px}tr:last-child td{border-bottom:0}.pill{display:inline-block;padding:5px 8px;border-radius:20px;font-size:10px;font-weight:800}.pill.open{background:#fee2e2;color:#b91c1c}.pill.progress{background:#fef3c7;color:#92400e}.pill.done{background:#dcfce7;color:#166534}.empty{text-align:center;color:#94a3b8;padding:24px;font-size:13px}.hint{font-size:12px;color:#64748b;line-height:1.5}.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}.toolbar input,.toolbar select{max-width:230px}.notice{border:1px solid #bfdbfe;background:#eff6ff;padding:13px;border-radius:10px;color:#1e40af;font-size:12px;line-height:1.5;margin-bottom:15px}.delete-link{border:0;background:#fff1f2;color:#be123c;border-radius:7px;padding:6px 8px;cursor:pointer;font-weight:700;font-size:11px}.footer-note{font-size:11px;color:#94a3b8;text-align:center;margin:24px 0 8px}
+
+.stamping-setup-row{display:grid;grid-template-columns:1.2fr 1fr 1fr 34px;gap:10px;align-items:end;padding:12px;background:#f8fafc;border:1px solid #dbe3ee;border-radius:10px;margin:9px 0}
+.stamping-setup-row .field{min-width:0}
+.stamping-setup-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px}
+.stamping-setup-head label{font-size:12px;color:#334155;font-weight:800}
+.stamping-hint{font-size:11px;color:#64748b;line-height:1.5;margin-top:7px}
+.stamping-remove-row{border:0;border-radius:8px;background:#fee2e2;color:#b91c1c;height:38px;font-weight:800;cursor:pointer}
+@media(max-width:720px){.stamping-setup-row{grid-template-columns:1fr}.stamping-remove-row{height:36px}}
+
+@media(max-width:1050px){.cards{grid-template-columns:repeat(2,minmax(0,1fr))}.grid2{grid-template-columns:1fr}}
+@media(max-width:720px){.sidebar{transform:translateX(-100%)}.sidebar.open{transform:translateX(0)}.main{margin-left:0;width:100%;padding:15px}.menu-btn{display:block}.topbar{align-items:flex-start}.topbar h1{font-size:18px}.top-meta{flex-direction:column;align-items:flex-end}.hero{padding:20px}.hero h2{font-size:21px}.cards{gap:9px}.card{padding:14px}.stat-value{font-size:24px}.form-grid{grid-template-columns:1fr}.field.full{grid-column:auto}}
+</style>
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar" id="sidebar">
+  <div class="brand"><div class="eyebrow">SISTEM MONITORING MAINTENANCE</div><h2>PERAWATAN BERKALA</h2><p>Monitoring khusus mesin stamping</p></div>
+  <nav class="nav">
+    <button class="active" data-page="dashboard"><span>▦</span> Dashboard</button>
+    <button data-page="masalah"><span>⚠</span> Catat Masalah Mesin</button>
+    <button data-page="perbaikan"><span>🔧</span> Perbaikan Mesin</button>
+    <button data-page="setting"><span>⚙</span> Data Mesin Stamping</button>
+    <button data-page="trial"><span>▣</span> Trial Foil / Cetakan</button>
+    <button data-page="ide"><span>✦</span> Pengembangan Mesin</button>
+    <button data-page="notifikasi"><span>♧</span> Notifikasi Mesin</button>
+    <button data-page="riwayat"><span>◷</span> Riwayat Masalah</button>
+    <button data-page="laporan"><span>▤</span> Laporan Bulanan</button>
+  </nav>
+</aside>
+<main class="main">
+  <header class="topbar"><div style="display:flex;align-items:center;gap:12px"><button class="menu-btn" id="menuBtn">☰ MENU</button><h1 id="topTitle">Dashboard</h1></div><div class="top-meta"><div class="clock" id="clock">--:--:--</div><div id="today"></div></div></header>
+  <section class="page active" id="page-dashboard">
+    <div class="hero"><div class="eyebrow">SISTEM MONITORING MAINTENANCE</div><h2>PERAWATAN BERKALA</h2><p>Kelola kondisi, gangguan, perbaikan, dan riwayat perawatan mesin stamping dalam satu dashboard.</p></div>
+    <div class="cards">
+      <div class="card"><div class="stat-label">TOTAL LAPORAN MASALAH</div><div class="stat-value" id="statTotal">0</div><div class="stat-note">Semua laporan tercatat</div></div>
+      <div class="card"><div class="stat-label">MASALAH BELUM SELESAI</div><div class="stat-value" id="statOpen">0</div><div class="stat-note">Perlu tindak lanjut</div></div>
+      <div class="card"><div class="stat-label">DALAM PERBAIKAN</div><div class="stat-value" id="statProgress">0</div><div class="stat-note">Sedang ditangani</div></div>
+      <div class="card"><div class="stat-label">SELESAI</div><div class="stat-value" id="statDone">0</div><div class="stat-note">Masalah sudah ditangani</div></div>
+    </div>
+    <div class="grid2">
+      <div class="panel"><div class="section-title"><h3>Masalah Terbaru</h3><button class="btn secondary" onclick="showPage('riwayat')">Lihat semua</button></div><div id="recentProblems"></div></div>
+      <div class="panel"><div class="section-title"><h3>Ringkasan Mesin Stamping</h3></div><div class="form-grid">
+        <div class="field"><label>Nama / Nomor Mesin</label><input id="quickMachine" placeholder="Contoh: Stamping Besar 1"></div>
+        <div class="field"><label>Kondisi Mesin</label><select id="quickStatus"><option>Berjalan</option><option>Gangguan</option><option>Berhenti</option><option>Perawatan</option></select></div>
+        <div class="field full"><label>Catatan Kondisi</label><textarea id="quickNote" placeholder="Catatan singkat kondisi mesin..."></textarea></div>
+      </div><div class="actions"><button class="btn primary" onclick="saveMachine()">Simpan Kondisi</button></div><div id="machineList" style="margin-top:13px"></div></div>
+    </div>
+  </section>
+  <section class="page" id="page-masalah">
+    <div class="panel"><div class="section-title"><h3>Catat Masalah Mesin Stamping</h3></div><div class="notice">Catat gangguan mesin secara rinci agar teknisi dapat menindaklanjuti dan riwayat perbaikan tersimpan.</div>
+      <form id="problemForm"><div class="form-grid">
+        <div class="field"><label>Tanggal & Waktu</label><input type="datetime-local" id="problemDate" required></div>
+        <div class="field"><label>Nama / Nomor Mesin</label><input id="problemMachine" placeholder="Contoh: Stamping Kecil 1" required></div>
+        <div class="field"><label>Bagian Bermasalah</label><select id="problemPart"><option>Motor / Drive</option><option>PLC / Sensor</option><option>Pneumatik / Hidrolik</option><option>Cetakan / Dies</option><option>Foil / Pemanas</option><option>Kelistrikan</option><option>Mekanik</option><option>Lainnya</option></select></div>
+        <div class="field"><label>Prioritas</label><select id="problemPriority"><option>Normal</option><option>Menengah</option><option>Tinggi</option><option>Darurat</option></select></div>
+        <div class="field full"><label>Gejala / Masalah</label><textarea id="problemDesc" placeholder="Jelaskan gejala, alarm, suara, atau kondisi yang terjadi..." required></textarea></div>
+        <div class="field"><label>Pelapor</label><input id="problemReporter" placeholder="Nama operator / teknisi"></div>
+        <div class="field"><label>Status</label><select id="problemStatus"><option>Belum Ditangani</option><option>Dalam Perbaikan</option><option>Selesai</option></select></div>
+      </div><div class="actions"><button class="btn primary" type="submit">Simpan Laporan</button><button class="btn secondary" type="reset">Kosongkan Form</button></div></form>
+    </div>
+  </section>
+  <section class="page" id="page-perbaikan">
+    <div class="panel"><div class="section-title"><h3>Catatan Perbaikan Mesin</h3></div><form id="repairForm"><div class="form-grid">
+      <div class="field"><label>Tanggal Perbaikan</label><input id="repairDate" type="date" required></div>
+      <div class="field"><label>Mesin</label><input id="repairMachine" required placeholder="Nama / nomor mesin"></div>
+      <div class="field"><label>Teknisi</label><input id="repairTech" placeholder="Nama teknisi" required></div>
+      <div class="field"><label>Durasi (menit)</label><input id="repairDuration" type="number" min="0" placeholder="Contoh: 45"></div>
+      <div class="field full"><label>Tindakan Perbaikan</label><textarea id="repairAction" required placeholder="Langkah perbaikan yang dilakukan..."></textarea></div>
+      <div class="field full"><label>Hasil / Spare Part</label><textarea id="repairResult" placeholder="Hasil pengecekan, komponen yang diganti, dan hasil uji coba..."></textarea></div>
+    </div><div class="actions"><button class="btn primary" type="submit">Simpan Perbaikan</button><button class="btn secondary" type="reset">Reset</button></div></form></div>
+    <div class="panel" style="margin-top:16px"><div class="section-title"><h3>Riwayat Perbaikan</h3></div><div id="repairTable"></div></div>
+  </section>
+  <section class="page" id="page-setting">
+    <div class="panel">
+      <div class="section-title"><h3>⚙️ SETTING JENIS BARANG STAMPING</h3></div>
+      <div class="notice">Masukkan data produk stamping, lalu tambahkan satu atau beberapa detail cetakan, warna foil, dan ukuran foil sesuai kebutuhan produk.</div>
+      <form id="stampingSettingForm">
+        <div class="form-grid">
+          <div class="field"><label>TANGGAL</label><input type="date" id="stampingTanggal" required></div>
+          <div class="field"><label>NAMA BARANG</label><input type="text" id="stampingNamaBarang" placeholder="Contoh: XXI BUCKET" required></div>
+          <div class="field"><label>KODE BARANG</label><input type="text" id="stampingKodeBarang" placeholder="Contoh: XXI-001"></div>
+          <div class="field"><label>BANYAK CETAKAN</label><input type="number" id="stampingBanyakCetakan" min="1" placeholder="Contoh: 3"></div>
+          <div class="field"><label>JUMLAH BARIS / SHEET</label><input type="number" id="stampingBaris" min="1" placeholder="Contoh: 3"></div>
+          <div class="field"><label>UKURAN POSISI CETAKAN</label><input type="text" id="stampingUkuranPosisiCetakan" placeholder="Contoh: 30 CM x 20 CM"></div>
+          <div class="field"><label>USIA CETAKAN</label><input type="text" id="stampingUsiaCetakan" placeholder="Contoh: 2 TAHUN"></div>
+          <div class="field full"><label>KETERANGAN</label><textarea id="stampingKeterangan" placeholder="Keterangan spesifikasi barang..."></textarea></div>
+        </div>
+        <div style="margin-top:18px">
+          <div class="stamping-setup-head">
+            <label>CETAKAN / FOIL</label>
+            <button type="button" class="btn primary" onclick="tambahBarisStamping()">+ TAMBAH CETAKAN</button>
+          </div>
+          <div id="daftarCetakanStamping"></div>
+          <div class="stamping-hint">Bisa menambahkan 2, 3, 4, 5 ukuran atau lebih sesuai kebutuhan produk.</div>
+        </div>
+        <div class="actions"><button class="btn primary" type="submit">💾 SIMPAN SETTING BARANG</button><button class="btn secondary" type="button" onclick="resetFormStamping()">RESET</button></div>
+      </form>
+    </div>
+    <div class="panel" style="margin-top:16px">
+      <div class="section-title"><h3>📋 DATA JENIS BARANG STAMPING</h3><span class="pill progress" id="jumlahDataStamping">0 DATA</span></div>
+      <div class="toolbar"><input id="stampingSearch" placeholder="Cari nama / kode barang..." oninput="renderStampingSettings()"></div>
+      <div id="tabelStamping"></div>
+    </div>
+  </section>
+  <section class="page" id="page-trial">
+    <div class="panel"><div class="section-title"><h3>Catatan Trial Foil / Cetakan</h3></div>
+      <div class="notice">Gunakan menu ini untuk mencatat percobaan foil atau cetakan, hasil trial, kendala, dan tindak lanjut. Foto dapat ditambahkan sebagai dokumentasi sebelum/sesudah trial.</div>
+      <form id="trialForm">
+        <div class="form-grid">
+          <div class="field"><label>Tanggal Trial</label><input id="trialDate" type="date" required></div>
+          <div class="field"><label>Jenis Trial</label><select id="trialType"><option>Foil</option><option>Cetakan</option><option>Foil dan Cetakan</option></select></div>
+          <div class="field"><label>Nama / Nomor Mesin</label><input id="trialMachine" required placeholder="Contoh: Stamping Besar 1"></div>
+          <div class="field"><label>Nama Produk / Item</label><input id="trialProduct" placeholder="Nama produk atau jenis barang"></div>
+          <div class="field"><label>Operator / Teknisi</label><input id="trialPerson" placeholder="Nama pelaksana trial"></div>
+          <div class="field"><label>Status Trial</label><select id="trialStatus"><option>Dalam Percobaan</option><option>Berhasil</option><option>Perlu Perbaikan</option><option>Gagal</option></select></div>
+          <div class="field full"><label>Keterangan / Tujuan Trial</label><textarea id="trialDescription" required placeholder="Jelaskan tujuan trial, setting yang dicoba, bahan foil/cetakan, dan parameter penting..."></textarea></div>
+          <div class="field full"><label>Hasil Trial dan Kendala</label><textarea id="trialResult" placeholder="Catat hasil, kualitas cetakan, masalah yang muncul, dan tindak lanjut..."></textarea></div>
+          <div class="field full"><label>Foto Dokumentasi (bisa pilih beberapa foto)</label><input id="trialPhotos" type="file" accept="image/*" multiple><div class="hint">Pilih satu atau beberapa foto. Foto disimpan bersama data trial di browser ini; ukuran foto besar dapat memenuhi kapasitas penyimpanan browser.</div><div id="trialPhotoPreview" style="display:flex;flex-wrap:wrap;gap:10px;margin-top:5px"></div></div>
+        </div>
+        <div class="actions"><button class="btn primary" type="submit">Simpan Trial</button><button class="btn secondary" type="reset">Kosongkan Form</button></div>
+      </form>
+    </div>
+    <div class="panel" style="margin-top:16px"><div class="section-title"><h3>Riwayat Trial Foil / Cetakan</h3></div><div class="toolbar"><input id="trialSearch" placeholder="Cari mesin / produk / keterangan..." oninput="renderTrials()"><select id="trialFilterType" onchange="renderTrials()"><option value="">Semua jenis</option><option>Foil</option><option>Cetakan</option><option>Foil dan Cetakan</option></select><select id="trialFilterMonth" onchange="renderTrials()"><option value="">Semua bulan</option></select></div><div id="trialTable"></div></div>
+  </section>
+  <section class="page" id="page-ide">
+    <div class="panel"><div class="section-title"><h3>Pengembangan & Ide Perbaikan</h3></div><form id="ideaForm"><div class="form-grid">
+      <div class="field"><label>Tanggal</label><input id="ideaDate" type="date" required></div><div class="field"><label>Nama Pengusul</label><input id="ideaAuthor" placeholder="Nama operator / teknisi" required></div>
+      <div class="field"><label>Mesin</label><input id="ideaMachine" placeholder="Nama mesin stamping" required></div><div class="field"><label>Prioritas</label><select id="ideaPriority"><option>Normal</option><option>Menengah</option><option>Tinggi</option></select></div>
+      <div class="field full"><label>Ide / Usulan</label><textarea id="ideaDesc" required placeholder="Jelaskan ide untuk meningkatkan kelancaran, keselamatan, atau kualitas..."></textarea></div>
+    </div><div class="actions"><button class="btn primary" type="submit">Simpan Ide</button></div></form></div>
+    <div class="panel" style="margin-top:16px"><div class="section-title"><h3>Daftar Ide</h3></div><div id="ideaTable"></div></div>
+  </section>
+  <section class="page" id="page-notifikasi">
+    <div class="panel"><div class="section-title"><h3>Notifikasi Mesin</h3></div><div class="notice">Notifikasi browser memerlukan izin dan halaman tetap terbuka. Data masalah tetap tersimpan di browser meskipun halaman di-refresh.</div>
+      <div class="actions"><button class="btn primary" onclick="enableNotifications()">Aktifkan Notifikasi Browser</button><button class="btn secondary" onclick="sendReminder()">Kirim Pengingat Uji</button></div>
+      <div id="notificationSummary" style="margin-top:18px"></div>
+    </div>
+  </section>
+  <section class="page" id="page-riwayat">
+    <div class="panel"><div class="section-title"><h3>Riwayat Masalah Mesin</h3></div><div class="toolbar"><input id="historySearch" placeholder="Cari mesin / masalah..." oninput="renderProblems()"><select id="historyMonth" onchange="renderProblems()"><option value="">Semua bulan</option></select><select id="historyStatus" onchange="renderProblems()"><option value="">Semua status</option><option>Belum Ditangani</option><option>Dalam Perbaikan</option><option>Selesai</option></select></div><div id="problemTable"></div></div>
+  </section>
+  <section class="page" id="page-laporan">
+    <div class="panel"><div class="section-title"><h3>Laporan Bulanan Mesin Stamping</h3></div><div class="toolbar"><label for="reportMonth" style="align-self:center">Pilih bulan:</label><input id="reportMonth" type="month" onchange="renderReport()"><button class="btn secondary" onclick="window.print()">Cetak Laporan</button><button class="btn secondary" onclick="exportCSV()">Ekspor CSV</button></div><div id="reportContent"></div></div>
+  </section>
+  <div class="footer-note">MESIN STAMPING • SISTEM MONITORING MAINTENANCE • Data tersimpan lokal di browser</div>
+</main>
+</div>
+<script>
+const KEY='stampingMaintenance_standalone_v1';
+let data;
+try { data=JSON.parse(localStorage.getItem(KEY)||'{}'); } catch(err) { data={}; }
+data={problems:[],repairs:[],machines:[],ideas:[],trials:[],settings:[],...data};
+for(const k of ['problems','repairs','machines','ideas','trials','settings']) if(!Array.isArray(data[k])) data[k]=[];
+function persist(){localStorage.setItem(KEY,JSON.stringify(data));renderAll()}
+function id(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
+function val(x){return String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function today(){let d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
+function nowLocal(){let d=new Date();return `${today()}T${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`}
+function showPage(name){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById('page-'+name).classList.add('active');document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('active',b.dataset.page===name));document.getElementById('topTitle').textContent=({dashboard:'Dashboard',masalah:'Catat Masalah Mesin',perbaikan:'Perbaikan Mesin',setting:'Data Mesin Stamping',trial:'Trial Foil / Cetakan',ide:'Pengembangan Mesin',notifikasi:'Notifikasi Mesin',riwayat:'Riwayat Masalah',laporan:'Laporan Bulanan'})[name];document.getElementById('sidebar').classList.remove('open');renderAll()}
+document.querySelectorAll('.nav button').forEach(b=>b.addEventListener('click',()=>showPage(b.dataset.page)));
+document.getElementById('menuBtn').addEventListener('click',()=>document.getElementById('sidebar').classList.toggle('open'));
+function pill(s){let c=s==='Selesai'?'done':s==='Dalam Perbaikan'?'progress':'open';return `<span class="pill ${c}">${val(s)}</span>`}
+function table(headers,rows){if(!rows.length)return '<div class="empty">Belum ada data.</div>';return `<div class="table-wrap"><table><thead><tr>${headers.map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>${rows.join('')}</tbody></table></div>`}
+document.getElementById('problemForm').addEventListener('submit',e=>{e.preventDefault();data.problems.unshift({id:id(),date:problemDate.value||nowLocal(),machine:problemMachine.value.trim(),part:problemPart.value,priority:problemPriority.value,desc:problemDesc.value.trim(),reporter:problemReporter.value.trim(),status:problemStatus.value,created:new Date().toISOString()});e.target.reset();problemDate.value=nowLocal();persist();showPage('riwayat')});
+document.getElementById('repairForm').addEventListener('submit',e=>{e.preventDefault();data.repairs.unshift({id:id(),date:repairDate.value,machine:repairMachine.value.trim(),tech:repairTech.value.trim(),duration:repairDuration.value,action:repairAction.value.trim(),result:repairResult.value.trim()});e.target.reset();repairDate.value=today();persist();});
+document.getElementById('machineForm').addEventListener('submit',e=>{e.preventDefault();data.machines.push({id:id(),name:machineName.value.trim(),type:machineType.value,location:machineLocation.value.trim(),status:machineInitial.value,note:'',updated:new Date().toISOString()});e.target.reset();persist()});
+document.getElementById('ideaForm').addEventListener('submit',e=>{e.preventDefault();data.ideas.unshift({id:id(),date:ideaDate.value,author:ideaAuthor.value.trim(),machine:ideaMachine.value.trim(),priority:ideaPriority.value,desc:ideaDesc.value.trim()});e.target.reset();ideaDate.value=today();persist()});
+
+let trialPhotoData=[];
+document.getElementById('trialDate').value=today();
+document.getElementById('trialPhotos').addEventListener('change', async function(){
+  const files=[...this.files].filter(f=>f.type.startsWith('image/'));
+  trialPhotoData=[];
+  const preview=document.getElementById('trialPhotoPreview');
+  preview.innerHTML='';
+  for(const file of files){
+    try{
+      const dataUrl=await new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result);reader.onerror=reject;reader.readAsDataURL(file)});
+      trialPhotoData.push({name:file.name,dataUrl});
+      const img=document.createElement('img');img.src=dataUrl;img.alt=file.name;img.style.cssText='width:95px;height:85px;object-fit:cover;border-radius:8px;border:1px solid #cbd5e1';
+      img.title=file.name;preview.appendChild(img);
+    }catch(err){console.warn('Foto tidak dapat dibaca',err)}
+  }
+});
+document.getElementById('trialForm').addEventListener('reset',()=>setTimeout(()=>{trialPhotoData=[];document.getElementById('trialPhotoPreview').innerHTML='';document.getElementById('trialDate').value=today()},0));
+document.getElementById('trialForm').addEventListener('submit',e=>{
+  e.preventDefault();
+  data.trials.unshift({id:id(),date:trialDate.value,type:trialType.value,machine:trialMachine.value.trim(),product:trialProduct.value.trim(),person:trialPerson.value.trim(),status:trialStatus.value,description:trialDescription.value.trim(),result:trialResult.value.trim(),photos:trialPhotoData.map(p=>({name:p.name,dataUrl:p.dataUrl})),created:new Date().toISOString()});
+  try{localStorage.setItem(KEY,JSON.stringify(data));}
+  catch(err){alert('Penyimpanan penuh. Coba kurangi ukuran/jumlah foto, lalu simpan lagi.');return;}
+  e.target.reset();trialPhotoData=[];persist();showPage('trial');
+});
+function renderTrials(){
+  const q=(document.getElementById('trialSearch')?.value||'').toLowerCase();
+  const type=document.getElementById('trialFilterType')?.value||'';
+  const month=document.getElementById('trialFilterMonth')?.value||'';
+  const arr=data.trials.filter(t=>(!q||(t.machine+' '+t.product+' '+t.description+' '+t.result+' '+t.person).toLowerCase().includes(q))&&(!type||t.type===type)&&(!month||t.date.slice(0,7)===month));
+  const monthSel=document.getElementById('trialFilterMonth'), old=monthSel.value;
+  const months=[...new Set(data.trials.map(t=>t.date.slice(0,7)))].sort().reverse();
+  if(monthSel.options.length!==months.length+1){monthSel.innerHTML='<option value="">Semua bulan</option>'+months.map(m=>`<option value="${m}">${m}</option>`).join('');monthSel.value=months.includes(old)?old:''}
+  document.getElementById('trialTable').innerHTML=table(['Tanggal','Jenis','Mesin / Produk','Keterangan & Hasil','Status','Foto','Aksi'],arr.map(t=>{
+    const photos=(t.photos||[]).filter(p=>p.dataUrl);
+    const photoHtml=photos.length?`<div style="display:flex;gap:5px;flex-wrap:wrap">${photos.map(p=>`<a href="${p.dataUrl}" target="_blank" title="${val(p.name)}"><img src="${p.dataUrl}" alt="Foto trial" style="width:55px;height:50px;object-fit:cover;border-radius:6px;border:1px solid #cbd5e1"></a>`).join('')}</div>`:'<span class="hint">Tidak ada foto</span>';
+    return `<tr><td>${val(t.date)}</td><td>${val(t.type)}</td><td><b>${val(t.machine)}</b><br>${val(t.product||'-')}<br><span class="hint">${val(t.person||'')}</span></td><td><b>Keterangan:</b> ${val(t.description)}<br><b>Hasil:</b> ${val(t.result||'-')}</td><td>${val(t.status)}</td><td>${photoHtml}</td><td><button class="delete-link" onclick="deleteItem('trials','${t.id}')">Hapus</button></td></tr>`;
+  }));
+}
+
+
+function tambahBarisStamping(values={}){
+  const container=document.getElementById('daftarCetakanStamping');
+  const row=document.createElement('div');
+  row.className='stamping-setup-row';
+  const idx=container.querySelectorAll('.stamping-setup-row').length+1;
+  row.innerHTML=`
+    <div class="field"><label>JENIS / NAMA CETAKAN ${idx}</label><input class="stampingCetakan" type="text" placeholder="Contoh: LOGO LA GRAMA" value="${val(values.cetakan||'')}"></div>
+    <div class="field"><label>WARNA FOIL</label><select class="stampingFoil">
+      <option value="">-- Pilih --</option>
+      ${['EMAS','SILVER','MERAH','BIRU','HIJAU','HITAM','PUTIH','LAINNYA'].map(c=>`<option ${values.foil===c?'selected':''}>${c}</option>`).join('')}
+    </select></div>
+    <div class="field"><label>UKURAN FOIL</label><input class="stampingUkuranFoil" type="text" placeholder="Contoh: 9 CM x 3 CM" value="${val(values.ukuranFoil||'')}"></div>
+    <button type="button" class="stamping-remove-row" title="Hapus baris" onclick="hapusBarisStamping(this)">✕</button>`;
+  container.appendChild(row);
+  renumberStampingRows();
+}
+function renumberStampingRows(){
+  document.querySelectorAll('#daftarCetakanStamping .stamping-setup-row').forEach((row,i)=>{
+    const label=row.querySelector('.field label');
+    if(label)label.textContent=`JENIS / NAMA CETAKAN ${i+1}`;
+  });
+}
+function hapusBarisStamping(btn){
+  const container=document.getElementById('daftarCetakanStamping');
+  if(container.querySelectorAll('.stamping-setup-row').length<=1){alert('Minimal harus ada 1 baris cetakan.');return;}
+  btn.closest('.stamping-setup-row').remove();renumberStampingRows();
+}
+function resetFormStamping(){
+  document.getElementById('stampingSettingForm').reset();
+  document.getElementById('stampingTanggal').value=today();
+  document.getElementById('daftarCetakanStamping').innerHTML='';
+  tambahBarisStamping();
+}
+document.getElementById('stampingSettingForm').addEventListener('submit',e=>{
+  e.preventDefault();
+  const details=[...document.querySelectorAll('#daftarCetakanStamping .stamping-setup-row')].map((row,i)=>({
+    nomor:i+1,
+    cetakan:row.querySelector('.stampingCetakan').value.trim(),
+    foil:row.querySelector('.stampingFoil').value,
+    ukuranFoil:row.querySelector('.stampingUkuranFoil').value.trim()
+  })).filter(x=>x.cetakan||x.foil||x.ukuranFoil);
+  const el=idName=>document.getElementById(idName);
+  const item={
+    id:id(),tanggal:el('stampingTanggal').value,namaBarang:el('stampingNamaBarang').value.trim(),
+    kodeBarang:el('stampingKodeBarang').value.trim(),detailCetakan:details,
+    banyakCetakan:el('stampingBanyakCetakan').value,baris:el('stampingBaris').value,
+    ukuranPosisiCetakan:el('stampingUkuranPosisiCetakan').value.trim(),
+    usiaCetakan:el('stampingUsiaCetakan').value.trim(),keterangan:el('stampingKeterangan').value.trim(),
+    created:new Date().toISOString()
+  };
+  data.settings.unshift(item);
+  try{localStorage.setItem(KEY,JSON.stringify(data));}
+  catch(err){data.settings.shift();alert('Penyimpanan browser penuh. Coba kurangi data terlebih dahulu.');return;}
+  resetFormStamping();renderAll();alert('Setting jenis barang berhasil disimpan.');
+});
+function renderStampingSettings(){
+  const q=(document.getElementById('stampingSearch')?.value||'').toLowerCase();
+  const rows=data.settings.filter(x=>(x.namaBarang+' '+x.kodeBarang+' '+x.keterangan).toLowerCase().includes(q));
+  document.getElementById('jumlahDataStamping').textContent=`${data.settings.length} DATA`;
+  document.getElementById('tabelStamping').innerHTML=table(
+    ['No','Tanggal','Nama Barang','Kode','Cetakan','Foil','Ukuran Foil','Banyak Cetakan','Baris / Sheet','Ukuran Posisi Cetakan','Usia Cetakan','Keterangan','Aksi'],
+    rows.map((x,i)=>{
+      const det=x.detailCetakan||[];
+      const list=(field)=>det.map(d=>val(d[field]||'-')).join('<hr style="border:0;border-top:1px solid #e2e8f0;margin:5px 0">')||'-';
+      return `<tr><td>${i+1}</td><td>${val(x.tanggal)}</td><td><b>${val(x.namaBarang)}</b></td><td>${val(x.kodeBarang||'-')}</td><td>${list('cetakan')}</td><td>${list('foil')}</td><td>${list('ukuranFoil')}</td><td>${val(x.banyakCetakan||'-')}</td><td>${val(x.baris||'-')}</td><td>${val(x.ukuranPosisiCetakan||'-')}</td><td>${val(x.usiaCetakan||'-')}</td><td>${val(x.keterangan||'-')}</td><td><button class="delete-link" onclick="deleteItem('settings','${x.id}')">Hapus</button></td></tr>`;
+    })
+  );
+}
+
+function deleteItem(kind,key){if(!confirm('Hapus data ini?'))return;data[kind]=data[kind].filter(x=>x.id!==key);persist()}
+function updateProblemStatus(key,status){let p=data.problems.find(x=>x.id===key);if(p){p.status=status;persist()}}
+function saveMachine(){let name=quickMachine.value.trim();if(!name){alert('Isi nama/nomor mesin terlebih dahulu.');return}let m=data.machines.find(x=>x.name.toLowerCase()===name.toLowerCase());if(!m){m={id:id(),name,type:'Stamping Lainnya',location:'',status:quickStatus.value,note:quickNote.value,updated:new Date().toISOString()};data.machines.push(m)}else{m.status=quickStatus.value;m.note=quickNote.value;m.updated=new Date().toISOString()}quickMachine.value='';quickNote.value='';persist()}
+function updateMachineStatus(key,status){let m=data.machines.find(x=>x.id===key);if(m){m.status=status;m.updated=new Date().toISOString();persist()}}
+function renderProblems(){let q=(historySearch?.value||'').toLowerCase(),month=historyMonth?.value||'',status=historyStatus?.value||'';let arr=data.problems.filter(p=>(!q||(p.machine+' '+p.desc+' '+p.part+' '+p.reporter).toLowerCase().includes(q))&&(!month||p.date.slice(0,7)===month)&&(!status||p.status===status));document.getElementById('problemTable').innerHTML=table(['Tanggal','Mesin / Bagian','Masalah','Prioritas','Status','Tindak lanjut'],arr.map(p=>`<tr><td>${val(p.date.replace('T',' '))}</td><td><b>${val(p.machine)}</b><br>${val(p.part)}</td><td>${val(p.desc)}<br><span class="hint">Pelapor: ${val(p.reporter||'-')}</span></td><td>${val(p.priority)}</td><td>${pill(p.status)}<br><select style="margin-top:6px;min-width:145px" onchange="updateProblemStatus('${p.id}',this.value)">${['Belum Ditangani','Dalam Perbaikan','Selesai'].map(s=>`<option ${p.status===s?'selected':''}>${s}</option>`).join('')}</select></td><td><button class="delete-link" onclick="deleteItem('problems','${p.id}')">Hapus</button></td></tr>`));}
+function renderRepairs(){document.getElementById('repairTable').innerHTML=table(['Tanggal','Mesin','Teknisi','Durasi','Tindakan / Hasil','Aksi'],data.repairs.map(r=>`<tr><td>${val(r.date)}</td><td>${val(r.machine)}</td><td>${val(r.tech)}</td><td>${val(r.duration||'-')} menit</td><td>${val(r.action)}<br><span class="hint">${val(r.result||'')}</span></td><td><button class="delete-link" onclick="deleteItem('repairs','${r.id}')">Hapus</button></td></tr>`))}
+function renderMachines(){document.getElementById('registeredMachines').innerHTML=table(['Nama Mesin','Tipe','Lokasi','Status','Aksi'],data.machines.map(m=>`<tr><td><b>${val(m.name)}</b></td><td>${val(m.type)}</td><td>${val(m.location||'-')}</td><td><select onchange="updateMachineStatus('${m.id}',this.value)">${['Berjalan','Gangguan','Berhenti','Perawatan'].map(s=>`<option ${m.status===s?'selected':''}>${s}</option>`).join('')}</select>${m.note?`<div class="hint">${val(m.note)}</div>`:''}</td><td><button class="delete-link" onclick="deleteItem('machines','${m.id}')">Hapus</button></td></tr>`));document.getElementById('machineList').innerHTML=data.machines.length?data.machines.map(m=>`<div style="padding:10px 0;border-bottom:1px solid #e2e8f0;font-size:12px"><b>${val(m.name)}</b> — ${val(m.status)} <span class="hint">${val(m.note||'')}</span></div>`).join(''):'<div class="empty">Belum ada mesin terdaftar.</div>'}
+function renderIdeas(){document.getElementById('ideaTable').innerHTML=table(['Tanggal','Mesin','Pengusul','Prioritas','Usulan','Aksi'],data.ideas.map(x=>`<tr><td>${val(x.date)}</td><td>${val(x.machine)}</td><td>${val(x.author)}</td><td>${val(x.priority)}</td><td>${val(x.desc)}</td><td><button class="delete-link" onclick="deleteItem('ideas','${x.id}')">Hapus</button></td></tr>`))}
+function renderDashboard(){statTotal.textContent=data.problems.length;statOpen.textContent=data.problems.filter(p=>p.status==='Belum Ditangani').length;statProgress.textContent=data.problems.filter(p=>p.status==='Dalam Perbaikan').length;statDone.textContent=data.problems.filter(p=>p.status==='Selesai').length;recentProblems.innerHTML=data.problems.length?table(['Tanggal','Mesin','Masalah','Status'],data.problems.slice(0,5).map(p=>`<tr><td>${val(p.date.replace('T',' '))}</td><td>${val(p.machine)}</td><td>${val(p.desc)}</td><td>${pill(p.status)}</td></tr>`)):'<div class="empty">Belum ada laporan masalah mesin.</div>'}
+function renderReport(){let month=reportMonth.value||today().slice(0,7),probs=data.problems.filter(p=>p.date.slice(0,7)===month),rep=data.repairs.filter(r=>r.date.slice(0,7)===month),ideas=data.ideas.filter(i=>i.date.slice(0,7)===month);reportContent.innerHTML=`<div class="cards"><div class="card"><div class="stat-label">MASALAH</div><div class="stat-value">${probs.length}</div></div><div class="card"><div class="stat-label">SELESAI</div><div class="stat-value">${probs.filter(p=>p.status==='Selesai').length}</div></div><div class="card"><div class="stat-label">PERBAIKAN</div><div class="stat-value">${rep.length}</div></div><div class="card"><div class="stat-label">IDE PENGEMBANGAN</div><div class="stat-value">${ideas.length}</div></div></div><h3>Masalah Bulan ${val(month)}</h3>${table(['Tanggal','Mesin','Bagian','Masalah','Status'],probs.map(p=>`<tr><td>${val(p.date.replace('T',' '))}</td><td>${val(p.machine)}</td><td>${val(p.part)}</td><td>${val(p.desc)}</td><td>${val(p.status)}</td></tr>`))}<h3 style="margin-top:20px">Perbaikan Bulan ${val(month)}</h3>${table(['Tanggal','Mesin','Teknisi','Tindakan','Hasil'],rep.map(r=>`<tr><td>${val(r.date)}</td><td>${val(r.machine)}</td><td>${val(r.tech)}</td><td>${val(r.action)}</td><td>${val(r.result)}</td></tr>`))}`}
+function renderNotifications(){let open=data.problems.filter(p=>p.status!=='Selesai');notificationSummary.innerHTML=open.length?`<h3>Perlu Tindak Lanjut (${open.length})</h3>`+table(['Mesin','Masalah','Status','Tanggal'],open.map(p=>`<tr><td>${val(p.machine)}</td><td>${val(p.desc)}</td><td>${pill(p.status)}</td><td>${val(p.date.replace('T',' '))}</td></tr>`)):'<div class="empty">Tidak ada masalah terbuka. Semua laporan sudah selesai.</div>'}
+function renderAll(){renderDashboard();renderProblems();renderRepairs();renderMachines();renderStampingSettings();renderIdeas();renderTrials();renderReport();renderNotifications();let months=[...new Set(data.problems.map(p=>p.date.slice(0,7)))].sort().reverse();let sel=historyMonth.value;historyMonth.innerHTML='<option value="">Semua bulan</option>'+months.map(m=>`<option>${m}</option>`).join('');historyMonth.value=months.includes(sel)?sel:''}
+function enableNotifications(){if(!('Notification'in window)){alert('Browser ini tidak mendukung notifikasi.');return}Notification.requestPermission().then(p=>alert(p==='granted'?'Notifikasi browser berhasil diaktifkan.':'Izin notifikasi belum diberikan. Silakan izinkan melalui pengaturan situs di browser.'))}
+function sendReminder(){let n=data.problems.filter(p=>p.status!=='Selesai').length;if('Notification'in window&&Notification.permission==='granted'){new Notification('Monitoring Mesin Stamping',{body:`Ada ${n} masalah yang perlu ditindaklanjuti.`})}else{alert(`Pengingat: ada ${n} masalah yang belum selesai. Aktifkan izin notifikasi browser jika ingin menerima notifikasi.`)}}
+function exportCSV(){let rows=[['Tanggal','Mesin','Bagian','Masalah','Prioritas','Status','Pelapor'],...data.problems.map(p=>[p.date,p.machine,p.part,p.desc,p.priority,p.status,p.reporter])];let csv=rows.map(r=>r.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(',')).join('\r\n');let blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8;'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='laporan-mesin-stamping-'+(reportMonth.value||today().slice(0,7))+'.csv';a.click();URL.revokeObjectURL(a.href)}
+function tick(){let d=new Date();clock.textContent=d.toLocaleTimeString('id-ID');todayLabel=d.toLocaleDateString('id-ID',{weekday:'long',year:'numeric',month:'long',day:'numeric'});todayEl.textContent=todayLabel}
+const clock=document.getElementById('clock'),todayEl=document.getElementById('today');
+problemDate.value=nowLocal();repairDate.value=today();ideaDate.value=today();reportMonth.value=today().slice(0,7);stampingTanggal.value=today();tambahBarisStamping();
+tick();setInterval(tick,1000);renderAll();
+</script>
+</body>
+</html>
